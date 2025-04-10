@@ -1,4 +1,5 @@
-
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,57 +8,46 @@ public class Tile : MonoBehaviour
 {
     public TileState tileState;
     public TileCell cell;
-    public int number;
 
-    [SerializeField] Image background;
-    [SerializeField] TMP_Text numberText;
+    public Image background;
+    public TMP_Text numberText;
+
+    public int number;
     // Start is called before the first frame update
-    void Awake()
+
+    public void Start()
     {
         background = GetComponent<Image>();
         numberText = GetComponentInChildren<TMP_Text>();
     }
-    void Start()
-    {
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void SetState(TileState state)
+    public void SetTileState(TileState state)
     {
         tileState = state;
         number = tileState.number;
 
         background.color = tileState.backgroundColor;
         numberText.color = tileState.textColor;
-        numberText.text = tileState.number.ToString();
-    }
-    public void SetTile(TileCell tileCell)
-    {
-        if (this.cell != null)
-        {
-            this.cell.tile = null;
-        }
-        cell = tileCell;
-        cell.tile = this;
-        transform.position = cell.transform.position;
-        
+        numberText.text = $"{number}";
+
     }
 
-    public void MoveTo(TileCell tileCell)
+    public void SetTilePos(TileCell tileCell)
     {
-        if (this.cell != null)
+        cell = tileCell; //先設定好cell=傳入的cell
+        cell.tile = this;  //在設定該cell的tile為自己
+
+        transform.position = cell.transform.position;
+    }
+
+    public void MoveTo(TileCell tileCell) //移動
+    {
+        if (cell != null) //先判斷有沒有本身有沒有紀錄cell了，如果有就清空他的tile
         {
-            this.cell.tile = null;
+            cell.tile = null;
         }
-        cell = tileCell;
-        cell.tile = this;
+        cell = tileCell;            //設定cell為新的cell，並且該cell的tile也設定成自己
+        cell.tile = this;        
+
         transform.position = cell.transform.position;
     }
 }

@@ -23,15 +23,15 @@ public class GridSpawner : MonoBehaviour
     void GenerationGrid()
     {
 
-        int num = 0;
+        // int num = 0;
         //生成列
         for (int i = 0; i < row; i++)
         {
             GameObject row = Instantiate(rowPrefab);
             row.transform.SetParent(gridParent.transform);
 
-            row.GetComponent<TileRow>().rowNum = num;
-            num++;
+            // row.GetComponent<TileRow>().rowNum = num;
+            // num++;
 
             for (int j = 0; j < col; j++)
             {

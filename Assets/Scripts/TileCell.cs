@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class TileCell : MonoBehaviour
 {
-    public Vector2Int coordinates; //座標
+    public Vector2Int coordinates;
     public Tile tile;
 
-    public bool empty;
-    public bool occupied;
+    public bool empty{
+        get{return tile==null;}
+    }
+    public bool occupied{
+        get{return tile!=null;}
+    }
     // Start is called before the first frame update
     void Start()
     {
