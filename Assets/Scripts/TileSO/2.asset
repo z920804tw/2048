@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backgroundColor: {r: 1, g: 0.80405575, b: 0.76792455, a: 0.8627451}
   textColor: {r: 0.2905661, g: 0.2905661, b: 0.2905661, a: 1}
+  number: 2
