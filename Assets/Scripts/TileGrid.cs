@@ -33,7 +33,7 @@ public class TileGrid : MonoBehaviour
         }
     }
 
-    public TileCell GetCell(int x, int y)
+    public TileCell GetCell(int x, int y) //取得目標cell
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
@@ -54,7 +54,7 @@ public class TileGrid : MonoBehaviour
         return GetCell(coordinates.x,coordinates.y); //回傳隔壁的格子的座標給GetCell
     }
 
-    public TileCell GetRandomEmptyCell()
+    public TileCell GetRandomEmptyCell() //取的隨機的未被占用cell
     {
         int index = Random.Range(0, size); //設定隨機數
         int startIndex = index;             //紀錄起始位置

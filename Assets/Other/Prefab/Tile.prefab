@@ -91,9 +91,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileState: {fileID: 0}
   cell: {fileID: 0}
-  number: 0
   background: {fileID: 7630447636984360711}
   numberText: {fileID: 1407228636494913601}
+  number: 2
 --- !u!1 &6130919945782142506
 GameObject:
   m_ObjectHideFlags: 0
