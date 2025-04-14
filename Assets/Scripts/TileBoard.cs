@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TileBoard : MonoBehaviour
 {
+    public GameManager gameManager;
     public Tile tilePrefab;
     public TileState[] tileStates;
     TileGrid tileGrid;
@@ -15,13 +16,7 @@ public class TileBoard : MonoBehaviour
         tileGrid = GetComponentInChildren<TileGrid>();
         tiles = new List<Tile>(tileGrid.size);
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        canMove = true;
-        SpawnTile();
-        SpawnTile();
-    }
+
 
     // Update is called once per frame
     void Update()
@@ -30,23 +25,23 @@ public class TileBoard : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.W)) //上
         {
-            MoveTile(Vector2Int.up, 0, 1, 1, 1);
+            CheckCell(Vector2Int.up, 0, 1, 1, 1);
         }
         else if (Input.GetKeyDown(KeyCode.S)) //下
         {
-            MoveTile(Vector2Int.down, 0, 1, tileGrid.height - 2, -1);
+            CheckCell(Vector2Int.down, 0, 1, tileGrid.height - 2, -1);
         }
         else if (Input.GetKeyDown(KeyCode.A))//左
         {
-            MoveTile(Vector2Int.left, 1, 1, 0, 1);
+            CheckCell(Vector2Int.left, 1, 1, 0, 1);
         }
         else if (Input.GetKeyDown(KeyCode.D))   //右
         {
-            MoveTile(Vector2Int.right, tileGrid.width - 2, -1, 0, 1);
+            CheckCell(Vector2Int.right, tileGrid.width - 2, -1, 0, 1);
         }
 
     }
-    public void MoveTile(Vector2Int direction, int startX, int incrementX, int startY, int incrementY) //查詢範圍內的所有cell
+    public void CheckCell(Vector2Int direction, int startX, int incrementX, int startY, int incrementY) //查詢範圍內的所有cell
     {
         StartCoroutine(WaitTileChange()); //等待所有方塊的移動
         for (int x = startX; x >= 0 && x < tileGrid.width; x += incrementX) //左至右
@@ -115,9 +110,24 @@ public class TileBoard : MonoBehaviour
                 return i;
             }
         }
-        return -1;
-    }
+        return 99;
 
+    }
+    public void ClearBoard() //清空Board上所有設定
+    {
+        //清空每個Cell紀錄的tile
+        foreach (var cell in tileGrid.cells)
+        {
+            cell.tile = null;
+        }
+
+        //清空場上所有的tile物件
+        foreach (var tile in tiles)
+        {
+            Destroy(tile.gameObject);
+        }
+        tiles.Clear();
+    }
 
     public void SpawnTile()
     {
@@ -137,7 +147,7 @@ public class TileBoard : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        int index = Mathf.Clamp(IndexOfTile(b.tileState) + 1, 0, tileStates.Length); //限制回傳的數值最大只會是tileStates陣列的大小
+        int index = Mathf.Clamp(IndexOfTile(b.tileState) + 1, 0, tileStates.Length - 1); //限制回傳的數值最大只會是tileStates陣列的大小
         b.tileState = tileStates[index];
         b.number = b.number * 2;
 
@@ -158,7 +168,41 @@ public class TileBoard : MonoBehaviour
             tile.lockTile = false;
         }
 
-        if (tiles.Count != tileGrid.size)
+        //檢查是否結束
+        if (CheckGameOver())
+        {
+            gameManager.GameOver();
+        }
+    }
+
+    bool CheckGameOver()
+    {
+        if (tiles.Count != tileGrid.size) //如果不是最大，那就回傳false，表示還沒結束
+        {
+
             SpawnTile();
+            return false;
+        }
+        else                            //如果已經滿了，就檢查每個tile的鄰近目標能不能合併
+        {
+            foreach (var tile in tiles)
+            {
+                TileCell up = tileGrid.GetAdjacentCell(tile.cell, Vector2Int.up); //上
+                TileCell down = tileGrid.GetAdjacentCell(tile.cell, Vector2Int.down); //下
+                TileCell left = tileGrid.GetAdjacentCell(tile.cell, Vector2Int.left); //左
+                TileCell right = tileGrid.GetAdjacentCell(tile.cell, Vector2Int.right); //右
+
+                //如果只要有一個方向可以合併，就代表還沒結束，否則如果都沒有就回傳true，代表結束
+                if (up != null && CanMergeTiles(tile, up.tile)
+                || down != null && CanMergeTiles(tile, down.tile)
+                || left != null && CanMergeTiles(tile, left.tile)
+                || right != null && CanMergeTiles(tile, right.tile))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }
