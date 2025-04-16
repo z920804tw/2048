@@ -163,9 +163,14 @@ public class TileBoard : MonoBehaviour
 
         canMove = true;
 
-        foreach (Tile tile in tiles)
+        foreach (Tile tile in tiles) //解鎖全部的tile的lock
         {
             tile.lockTile = false;
+        }
+
+        if (tiles.Count != tileGrid.size) //還有空位就會繼續生成
+        {
+            SpawnTile();
         }
 
         //檢查是否結束
@@ -179,8 +184,6 @@ public class TileBoard : MonoBehaviour
     {
         if (tiles.Count != tileGrid.size) //如果不是最大，那就回傳false，表示還沒結束
         {
-
-            SpawnTile();
             return false;
         }
         else                            //如果已經滿了，就檢查每個tile的鄰近目標能不能合併
