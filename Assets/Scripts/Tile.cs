@@ -19,7 +19,7 @@ public class Tile : MonoBehaviour
 
     public void Start()
     {
-        background = GetComponent<Image>();
+        background = GetComponentInChildren<Image>();
         numberText = GetComponentInChildren<TMP_Text>();
     }
     public void SetTileState(TileState state) //設定狀態
@@ -58,8 +58,10 @@ public class Tile : MonoBehaviour
         if (cell != null) //先判斷有沒有本身有沒有紀錄cell了，如果有就清空他的tile與cell資料
         {
             cell.tile = null;
+            Debug.Log("清空");
         }
         cell = null;
+        lockTile=true;
         tileCell.tile.lockTile = true;
         StartCoroutine(TileMoveAnim(tileCell.transform.position, true)); //A方塊會移動到B方塊上
     }

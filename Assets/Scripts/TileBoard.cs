@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class TileBoard : MonoBehaviour
@@ -70,8 +71,8 @@ public class TileBoard : MonoBehaviour
                 if (CanMergeTiles(tile, adjacentCell.tile)) //判斷能不能合併
                 {
                     MergeTile(tile, adjacentCell.tile);
+                    return;
                 }
-
                 break;
             }
             newCell = adjacentCell;
@@ -145,13 +146,14 @@ public class TileBoard : MonoBehaviour
     IEnumerator MergeDelay(Tile b) //數值延遲
     {
 
-        yield return new WaitForSeconds(0.1f);
-
+        yield return new WaitForSeconds(0.2f);
         int index = Mathf.Clamp(IndexOfTile(b.tileState) + 1, 0, tileStates.Length - 1); //限制回傳的數值最大只會是tileStates陣列的大小
         b.tileState = tileStates[index];
         b.number = b.number * 2;
 
         b.SetTileState(tileStates[index]);
+
+        gameManager.IncreaseScore(b.number);
 
     }
 
@@ -159,7 +161,7 @@ public class TileBoard : MonoBehaviour
     {
         canMove = false;
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
 
         canMove = true;
 
@@ -179,7 +181,6 @@ public class TileBoard : MonoBehaviour
             gameManager.GameOver();
         }
     }
-
     bool CheckGameOver()
     {
         if (tiles.Count != tileGrid.size) //如果不是最大，那就回傳false，表示還沒結束
