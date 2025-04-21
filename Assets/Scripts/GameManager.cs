@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class GameManager : MonoBehaviour
     [Header("分數文字")]
     public TMP_Text scoreText;
     public TMP_Text heighestScoreText;
+    public TMP_Text heighestMergeText;
+    public TMP_Text gameOverScoreText;
+    public TMP_Text gameOverHScoreText;
     int score;
     bool isStop;
 
@@ -22,18 +26,19 @@ public class GameManager : MonoBehaviour
     {
         isStop = false;
         heighestScoreText.text = $"{LoadHeighestScore()}";
+        heighestMergeText.text = $"{LoadHeighestMerge()}";
         // StarNewGame();
     }
     public void StopTime()
     {
-        isStop=!isStop;
+        isStop = !isStop;
         if (isStop)
         {
             Time.timeScale = 0;
         }
         else
         {
-            Time.timeScale=1;
+            Time.timeScale = 1;
         }
     }
 
@@ -62,7 +67,8 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ShowGameOver(float delay)
     {
-
+        gameOverScoreText.text = $"本回合分數:{score}";
+        gameOverHScoreText.text = $"歷史最高分數:{LoadHeighestScore()}";
         yield return new WaitForSeconds(delay);
         gameOverUI.SetActive(true);
         CanvasGroup canvasGroup = gameOverUI.GetComponent<CanvasGroup>();
@@ -84,16 +90,27 @@ public class GameManager : MonoBehaviour
         scoreText.text = $"{this.score}";
 
         int heighest = LoadHeighestScore();
+        int heighestMerge = LoadHeighestMerge();
         if (this.score > heighest)
         {
             PlayerPrefs.SetInt("HeightesScore", this.score);
-            heighestScoreText.text = $"{this.score}";
+            heighestScoreText.text = $"{LoadHeighestScore()}";
+        }
+
+        if (score > heighestMerge)
+        {
+            PlayerPrefs.SetInt("HeighestMerge",score);
+            heighestMergeText.text=$"{LoadHeighestMerge()}";
         }
     }
     public int LoadHeighestScore()
     {
         return PlayerPrefs.GetInt("HeightesScore", 0);
 
+    }
+    public int LoadHeighestMerge()
+    {
+        return PlayerPrefs.GetInt("HeighestMerge", 0);
     }
 
     public void ExitGame()
